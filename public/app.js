@@ -5,6 +5,7 @@ learnjs.problemView = function(problem) {
     var title = 'Problem ' + problem + ' coming soon!'; 
     return $('<div class="problem-view">').text(title);
 }
+
 learnjs.showView = function(hash) {
     var routes = {
         '#problem': learnjs.problemView
@@ -15,4 +16,8 @@ learnjs.showView = function(hash) {
     if(viewFn) {
         $('.view-container').empty().append(viewFn(hashParts[1]));
     }
+}
+
+learnjs.onReady = function(){
+    learnjs.showView(window.location.hash);
 }

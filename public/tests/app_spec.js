@@ -15,6 +15,12 @@ describe('LearnJS', function() {
         expect(learnjs.problemView).toHaveBeenCalledWith('42');
     });
 
+    it('invokes the router when loaded', function() {
+        spyOn(learnjs, 'showView');
+        learnjs.onReady();
+        expect(learnjs.showView).toHaveBeenCalledWith(window.location.hash);
+    });
+
     describe('problem view', function(){
         it('has a title that includes the problem number', function(){
             var view = learnjs.problemView('1');
