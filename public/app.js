@@ -97,6 +97,13 @@ learnjs.triggerEvent = function(name, args) {
     $('.view-container>*').trigger(name, args);
 };
 
+learnjs.flashElement = function(elem, content) {
+    elem.fadeOut('fast', function() {
+        elem.html(content);
+        elem.fadeIn();
+    });
+};
+
 learnjs.onReady = function(){
     window.onhashchange = function(){
         learnjs.showView(window.location.hash);
