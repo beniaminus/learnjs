@@ -8,6 +8,14 @@ learnjs.problemView = function(problem) {
     var problemNumber = parseInt(problem, 10);
     var data = learnjs.problems[problemNumber - 1];
     var resultFlash = view.find('.result');
+    if (problemNumber < learnjs.problems.length) {
+        var buttonItem = learnjs.template('skip-btn');
+        buttonItem.find('a').attr('href', '#problem-' + (problemNumber + 1));
+        $('.nav-list').append(buttonItem);
+        view.bind('removingView', function() {
+            buttonItem.remove();
+        });        
+    }
 
     function checkAnswer() {
         var answer = view.find('.answer').val();
@@ -43,12 +51,12 @@ learnjs.landingView = function() {
 
 learnjs.buildCorrectFlash = function (problemNum) {
     var correctFlash = learnjs.template('correct-flash');
-    var link = correctFlash.find('a');
+    var nextLink = correctFlash.find('a');
     if (problemNum < learnjs.problems.length) {
-        link.attr('href', '#problem-' + (problemNum + 1));
+        nextLink.attr('href', '#problem-' + (problemNum + 1));
     } else {
-        link.attr('href', '');
-        link.text("You're Finished!");
+        nextLink.attr('href', '#');
+        nextLink.text("You're Finished!");
     }
     return correctFlash;
 };
@@ -56,12 +64,14 @@ learnjs.buildCorrectFlash = function (problemNum) {
 learnjs.showView = function(hash) {
     var routes = {
         '#problem': learnjs.problemView,
+        '#': learnjs.landingView,
         '': learnjs.landingView
     };
 
     var hashParts = hash.split('-');
     var viewFn = routes[hashParts[0]];
     if(viewFn) {
+        learnjs.triggerEvent('removingView', []);
         $('.view-container').empty().append(viewFn(hashParts[1]));
     }
 };
@@ -74,7 +84,7 @@ learnjs.applyObject = function(obj, elem) {
 
 learnjs.template = function(name) {
     return $('.templates .' + name).clone();
-}
+};
 
 learnjs.flashElement = function(elem, content) {
     elem.fadeOut('fast', function() {
@@ -83,12 +93,16 @@ learnjs.flashElement = function(elem, content) {
     });
 };
 
+learnjs.triggerEvent = function(name, args) {
+    $('.view-container>*').trigger(name, args);
+};
+
 learnjs.onReady = function(){
     window.onhashchange = function(){
         learnjs.showView(window.location.hash);
     };
     learnjs.showView(window.location.hash);
-}
+};
 
 learnjs.problems = [
     {
