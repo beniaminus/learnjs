@@ -121,3 +121,7 @@ learnjs.problems = [
         code: "function problem() { return 42 === 6 * __; }"
     }
 ];
+
+function googleSignIn() {
+    console.log(arguments);
+}
