@@ -49,7 +49,15 @@ learnjs.problemView = function(problem) {
 
 learnjs.landingView = function() {
     return learnjs.template('landing-view');
-}
+};
+
+learnjs.profileView = function() {
+    var view = learnjs.template('profile-view');
+    learnjs.identity.done(function(identity) {
+        view.find('.email').text(identity.email);
+    });
+    return view;
+};
 
 learnjs.buildCorrectFlash = function (problemNum) {
     var correctFlash = learnjs.template('correct-flash');
@@ -63,9 +71,16 @@ learnjs.buildCorrectFlash = function (problemNum) {
     return correctFlash;
 };
 
+learnjs.addProfileLink = function(profile) {
+    var link = learnjs.template('profile-link');
+    link.find('a').text(profile.email);
+    $('.signin-bar').prepend(link);
+};
+
 learnjs.showView = function(hash) {
     var routes = {
         '#problem': learnjs.problemView,
+        '#profile': learnjs.profileView,
         '#': learnjs.landingView,
         '': learnjs.landingView
     };
@@ -111,6 +126,7 @@ learnjs.onReady = function(){
         learnjs.showView(window.location.hash);
     };
     learnjs.showView(window.location.hash);
+    learnjs.identity.done(learnjs.addProfileLink);
 };
 
 learnjs.problems = [
@@ -167,5 +183,12 @@ function googleSignIn(googleUser) {
                 'accounts.google.com': id_token
             }
         })
+    });
+    learnjs.awsRefresh().then(function(id) {
+        learnjs.identity.resolve({
+            id: id,
+            email: googleUser.getBasicProfile().getEmail(),
+            refresh: refresh
+        });
     });
 }
